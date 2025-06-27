@@ -1,9 +1,3 @@
-diff --git a/README.md b/README.md
-index a881c422d530f757230021fde612bba33804e68e..0b55455ecd0042ee2c710800a29fdefe9ddf6510 100644
---- a/README.md
-+++ b/README.md
-@@ -1 +1,24 @@
--"# SWM-Treatment" 
 +# Harper Report-Based Nutrient Loading Calculator
 +
 +This repository contains a prototype implementation of the Harper nutrient loading calculator described in `harper_nutrient_calculator_prd.txt`.
@@ -13,11 +7,13 @@ index a881c422d530f757230021fde612bba33804e68e..0b55455ecd0042ee2c710800a29fdefe
 +- Sample default EMC and runoff coefficient values
 +- Command-line interface for quick calculations
 +- Basic unit tests
++- Simple PDF export of calculation results
 +
 +## Running the GUI
 +```bash
 +python -m harper_calc.gui
 +```
++Within the GUI, calculate results and click "Export PDF" to save them.
 +
 +## Running the CLI
 +```bash
