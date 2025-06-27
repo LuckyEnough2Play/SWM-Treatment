@@ -11,7 +11,7 @@ This document tracks progress on tasks derived from the PRD.
 | 5  | Results Preview & Transparency | In Progress | Calculation breakdown shown in GUI and PDF. | |
 | 6  | PDF Export | In Progress | Basic PDF export function added. | |
 | 7  | Data Handling | In Progress | JSON save/load implemented in CLI and GUI. | |
-| 8  | Help & Documentation | Not Started | Create help window and user/developer guides. | |
+| 8  | Help & Documentation | Completed | Help window implemented; user and developer guides added. | 2025-06-27 |
 | 9  | Testing | In Progress | Unit tests created. | |
 | 10 | Deployment | Not Started | Package for Windows and cross-platform if possible. | |
 | 11 | Support & Maintenance | Not Started | Version tracking and plan for future updates. | |

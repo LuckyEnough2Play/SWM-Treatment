@@ -10,6 +10,14 @@ from .calculator import (
 from .defaults import DEFAULT_EMC, RUNOFF_COEFFICIENT
 from .report import export_pdf
 
+HELP_TEXT = (
+    "Harper Nutrient Calculator\n\n"
+    "Enter site area, rainfall, and verify runoff coefficient and EMCs.\n"
+    "Runoff volume = area * 4046.8564224 * rainfall * runoff coefficient.\n"
+    "Loads = EMC * runoff volume / 1000.\n"
+    "Use File > Open/Save for scenarios and Export PDF for reports."
+)
+
 
 class CalculatorApp(tk.Tk):
     """Simple GUI for the Harper nutrient loading calculator."""
@@ -68,6 +76,11 @@ class CalculatorApp(tk.Tk):
         file_menu.add_command(label="Save", command=self.save_file)
         file_menu.add_command(label="Export PDF", command=self.export)
         menu.add_cascade(label="File", menu=file_menu)
+
+        help_menu = tk.Menu(menu, tearoff=0)
+        help_menu.add_command(label="About", command=self.show_help)
+        menu.add_cascade(label="Help", menu=help_menu)
+
         self.config(menu=menu)
 
     def calculate(self):
@@ -149,6 +162,14 @@ class CalculatorApp(tk.Tk):
         self.results.delete("1.0", tk.END)
         self.results.insert(tk.END, text)
         self.results.configure(state="disabled")
+
+    def show_help(self):
+        win = tk.Toplevel(self)
+        win.title("About")
+        text = tk.Text(win, width=60, height=15, wrap="word")
+        text.insert("1.0", HELP_TEXT)
+        text.configure(state="disabled")
+        text.pack(fill="both", expand=True, padx=10, pady=10)
 
 
 def main():
