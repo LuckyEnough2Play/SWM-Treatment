@@ -1,5 +1,6 @@
 """Calculation utilities for the Harper nutrient loading tool."""
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
+import json
 
 
 @dataclass
@@ -30,3 +31,32 @@ def calculate_site_loads(data: SiteData) -> dict:
         "TP_kg_per_yr": calculate_annual_load(data.emc_mg_per_L_TP, runoff_volume),
         "runoff_volume_m3": runoff_volume,
     }
+
+
+def format_breakdown(data: SiteData, result: dict) -> str:
+    """Return a multiline string showing calculation steps."""
+    area_m2 = data.area_acres * 4046.8564224
+    lines = [
+        "Calculation Breakdown:",
+        f"Runoff Volume = {data.area_acres} ac * 4046.8564224 m^2/ac = {area_m2:.2f} m^2",
+        f"               * {data.annual_rainfall_m} m * {data.runoff_coefficient}",
+        f"               = {result['runoff_volume_m3']:.2f} m^3",
+        f"TN Load = {data.emc_mg_per_L_TN} mg/L * {result['runoff_volume_m3']:.2f} m^3 / 1000",
+        f"        = {result['TN_kg_per_yr']:.2f} kg/yr",
+        f"TP Load = {data.emc_mg_per_L_TP} mg/L * {result['runoff_volume_m3']:.2f} m^3 / 1000",
+        f"        = {result['TP_kg_per_yr']:.2f} kg/yr",
+    ]
+    return "\n".join(lines)
+
+
+def save_site_data(data: SiteData, filepath: str) -> None:
+    """Save site data to a JSON file."""
+    with open(filepath, "w", encoding="utf-8") as f:
+        json.dump(asdict(data), f, indent=2)
+
+
+def load_site_data(filepath: str) -> SiteData:
+    """Load site data from a JSON file."""
+    with open(filepath, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    return SiteData(**data)

@@ -1,6 +1,12 @@
 import tkinter as tk
 from tkinter import ttk, filedialog
-from .calculator import SiteData, calculate_site_loads
+from .calculator import (
+    SiteData,
+    calculate_site_loads,
+    format_breakdown,
+    save_site_data,
+    load_site_data,
+)
 from .defaults import DEFAULT_EMC, RUNOFF_COEFFICIENT
 from .report import export_pdf
 
@@ -13,6 +19,7 @@ class CalculatorApp(tk.Tk):
         self.title("Harper Nutrient Calculator")
         self.last_result = None
         self._build_widgets()
+        self._build_menu()
 
     def _build_widgets(self):
         frame = ttk.Frame(self, padding="10")
@@ -54,6 +61,15 @@ class CalculatorApp(tk.Tk):
 
         frame.columnconfigure(1, weight=1)
 
+    def _build_menu(self):
+        menu = tk.Menu(self)
+        file_menu = tk.Menu(menu, tearoff=0)
+        file_menu.add_command(label="Open", command=self.open_file)
+        file_menu.add_command(label="Save", command=self.save_file)
+        file_menu.add_command(label="Export PDF", command=self.export)
+        menu.add_cascade(label="File", menu=file_menu)
+        self.config(menu=menu)
+
     def calculate(self):
         try:
             landuse = self.landuse_var.get()
@@ -75,23 +91,58 @@ class CalculatorApp(tk.Tk):
         )
 
         result = calculate_site_loads(data)
-        self.last_result = result
+        self.last_result = (result, data)
         output = (
             f"Runoff Volume (m^3): {result['runoff_volume_m3']:.2f}\n"
             f"TN Load (kg/yr): {result['TN_kg_per_yr']:.2f}\n"
-            f"TP Load (kg/yr): {result['TP_kg_per_yr']:.2f}"
+            f"TP Load (kg/yr): {result['TP_kg_per_yr']:.2f}\n\n"
+            f"{format_breakdown(data, result)}"
         )
         self._update_results(output)
 
     def export(self):
         if not self.last_result:
             return
+        result, data = self.last_result
         filepath = filedialog.asksaveasfilename(
             defaultextension=".pdf",
             filetypes=[("PDF files", "*.pdf")],
         )
         if filepath:
-            export_pdf(self.last_result, filepath)
+            export_pdf(result, filepath, data=data)
+
+    def save_file(self):
+        filepath = filedialog.asksaveasfilename(
+            defaultextension=".json",
+            filetypes=[("JSON files", "*.json")],
+        )
+        if filepath:
+            data = self._gather_site_data()
+            save_site_data(data, filepath)
+
+    def open_file(self):
+        filepath = filedialog.askopenfilename(filetypes=[("JSON files", "*.json")])
+        if not filepath:
+            return
+        data = load_site_data(filepath)
+        self._set_site_data(data)
+
+    def _gather_site_data(self) -> SiteData:
+        return SiteData(
+            area_acres=float(self.area_var.get()),
+            annual_rainfall_m=float(self.rainfall_var.get()),
+            runoff_coefficient=float(self.runoff_var.get()) if self.runoff_var.get() else RUNOFF_COEFFICIENT[self.landuse_var.get()],
+            emc_mg_per_L_TN=float(self.emc_tn_var.get()) if self.emc_tn_var.get() else DEFAULT_EMC[self.landuse_var.get()]["TN"],
+            emc_mg_per_L_TP=float(self.emc_tp_var.get()) if self.emc_tp_var.get() else DEFAULT_EMC[self.landuse_var.get()]["TP"],
+        )
+
+    def _set_site_data(self, data: SiteData) -> None:
+        # Keep current land use selection; just populate numeric fields
+        self.area_var.set(str(data.area_acres))
+        self.rainfall_var.set(str(data.annual_rainfall_m))
+        self.runoff_var.set(str(data.runoff_coefficient))
+        self.emc_tn_var.set(str(data.emc_mg_per_L_TN))
+        self.emc_tp_var.set(str(data.emc_mg_per_L_TP))
 
     def _update_results(self, text: str):
         self.results.configure(state="normal")
