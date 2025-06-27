@@ -1,0 +1,87 @@
+# Harper Report-Based Nutrient Loading Calculator – Process Requirements Document
+
+## Project Overview
+This document outlines the requirements for a standalone desktop application that computes stormwater nutrient loadings (nitrogen and phosphorus) using formulas and data from the 2007 Harper Stormwater Treatment Report. The Harper report’s analyses focus on nitrogen and phosphorus mass loadings as these nutrients are the primary contributors to water quality impairment in Florida. The proposed software will allow engineers and planners to calculate annual TN and TP loads for a site using Harper’s exact formulas, with transparency through displayed calculations and citations. The tool is intended for offline use on a single machine with a word-processor-style interface.
+
+## Target Users
+Civil and environmental engineers, stormwater planners, and regulatory reviewers needing quick estimates of nutrient loadings and compliance verification.
+
+## Goals and Objectives
+- **Accurate Calculations**: Based on exact Harper (2007) formulas.
+- **User-Friendly UI**: Word processor-style interface with input fields and a live preview.
+- **Default Values**: Pre-filled fields using Harper report data.
+- **Real-Time Feedback**: Instant calculation updates as inputs change.
+- **Transparency**: Display formulas and Harper citations.
+- **PDF Reporting**: Exportable, professional-format calculation sheet.
+- **Offline Functionality**: No cloud services or internet required.
+
+## Scope of the Product
+### In Scope
+- Annual TN and TP load calculations.
+- Pre- and post-development scenarios.
+- Harper-based default values and formulas.
+- Editable input fields and live calculation preview.
+- PDF export.
+
+### Out of Scope
+- Other pollutant types.
+- Treatment system design.
+- Web/mobile/cloud features.
+- Full word processor capabilities.
+
+## User Interface and Experience
+- **Layout**: Top pane for inputs, bottom pane for preview.
+- **Input Fields**: Clearly labeled with units, defaults based on land use.
+- **Live Validation & Feedback**: Real-time calculations with warnings for extreme values.
+- **Results Preview**: Includes inputs, calculated results, formulas, and citations.
+- **Export to PDF**: WYSIWYG export of the live preview.
+- **Controls**: Standard toolbar (new, open/save, export, help).
+
+## Functional Requirements
+1. **Inputs**: Editable fields for site data, rainfall, runoff, TN/TP EMC.
+2. **Defaults**: Loaded from Harper data.
+3. **Live Calculation**: Updates on input change.
+4. **Formula Use**: Annual Load = EMC × Annual Runoff Volume.
+5. **Runoff Volume Calculation**: Based on Harper methods or direct input.
+6. **Output Results**: TN and TP loads in kg/yr.
+7. **Formula Display**: Show numeric breakdowns in output.
+8. **Citation Support**: Include references for each formula/assumption.
+9. **Concise Report Style**: Minimal narrative, structured tables and bullets.
+10. **PDF Export**: Matches on-screen content.
+11. **Scenario Save/Open (optional)**.
+12. **Help Menu**: Input explanations and methodology recap.
+
+## Non-Functional Requirements
+- **Accuracy**: Match Harper results within tolerance.
+- **Performance**: Sub-second feedback, light CPU use.
+- **Stability**: Graceful error handling.
+- **Usability**: Clear labels, engineering terminology, tooltips.
+- **Platform**: Desktop (Windows primary, cross-platform desirable).
+- **Security**: No unauthorized file/network access.
+- **Maintainability**: Modular codebase with documentation.
+- **Offline Data**: All Harper data embedded.
+- **Debug Logs**: Optional, local-only.
+- **Regulatory Use**: Output format suitable for permitting documentation.
+
+## Technical Considerations
+- **Dev Tools**: VS Code and CLion.
+- **Language**: C++ with Qt or Python with GUI/PDF libraries.
+- **PDF Library**: Must support formula rendering (e.g., ReportLab, PDFium).
+- **Data Handling**: Embedded Harper data.
+- **Testing Strategy**: Unit, integration, and performance tests.
+- **Documentation**: User and developer guides.
+
+## Project Plan
+1. **Finalize PRD**
+2. **UI Design** (Wireframes)
+3. **Architecture Planning**
+4. **Phase 1**: Core calculations
+5. **Phase 2**: UI implementation
+6. **Phase 3**: Advanced features (PDF, citations, save/load)
+7. **Testing**: Unit, integration, usability, performance
+8. **Documentation**
+9. **Deployment**: Installer creation and testing
+10. **Support Plan**: Version tracking, issue reporting
+
+---
+**Reference**: Harper et al., 2007 FDEP Stormwater Treatment Report
