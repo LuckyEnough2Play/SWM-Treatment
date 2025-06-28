@@ -1,12 +1,12 @@
 """Command-line interface for the Harper nutrient loading calculator."""
 import argparse
-from .calculator import (
+from harper_calc.calculator import (
     SiteData,
     calculate_site_loads,
     load_site_data,
     save_site_data,
 )
-from .defaults import DEFAULT_EMC, RUNOFF_COEFFICIENT
+from harper_calc.defaults import DEFAULT_EMC, RUNOFF_COEFFICIENT
 
 
 def main(argv=None):

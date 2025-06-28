@@ -1,14 +1,14 @@
 import tkinter as tk
 from tkinter import ttk, filedialog
-from .calculator import (
+from harper_calc.calculator import (
     SiteData,
     calculate_site_loads,
     format_breakdown,
     save_site_data,
     load_site_data,
 )
-from .defaults import DEFAULT_EMC, RUNOFF_COEFFICIENT
-from .report import export_pdf
+from harper_calc.defaults import DEFAULT_EMC, RUNOFF_COEFFICIENT
+from harper_calc.report import export_pdf
 
 HELP_TEXT = (
     "Harper Nutrient Calculator\n\n"
