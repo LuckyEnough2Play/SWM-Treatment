@@ -13,7 +13,7 @@ This document tracks progress on tasks derived from the PRD.
 | 7  | Data Handling | Completed | JSON scenario save/load functionality implemented. | 2025-06-28 |
 | 8  | Help & Documentation | Completed | Help window implemented; user and developer guides added. | 2025-06-27 |
 | 9  | Testing | Completed | Unit tests cover calculator, PDF export, and CLI. | 2025-06-28 |
-| 10 | Deployment | In Progress | Added PyInstaller packaging instructions. | |
-| 11 | Support & Maintenance | Not Started | Version tracking and plan for future updates. | |
+| 10 | Deployment | Completed | PyInstaller packaging instructions and binaries verified. | 2025-06-29 |
+| 11 | Support & Maintenance | Completed | GitHub issues and version tagging documented. | 2025-06-29 |
 
 Update the **Status**, **Notes**, and **Completed On** fields as work progresses.
