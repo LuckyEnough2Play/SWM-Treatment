@@ -110,18 +110,26 @@ class CalculatorApp(tk.Tk):
             Tooltip(btn, name.capitalize())
 
     def _build_widgets(self):
-        paned = ttk.Panedwindow(self, orient=tk.HORIZONTAL)
-        paned.pack(fill="both", expand=True)
+        # Use grid layout for fixed left pane and expanding right pane
+        container = tk.Frame(self)
+        container.grid(row=0, column=0, sticky="nsew")
+        self.rowconfigure(0, weight=1)
+        self.columnconfigure(0, weight=1)
 
-        # Left pane: form
-        left = ttk.Frame(paned, padding=10, style="TFrame")
-        paned.add(left, weight=1)
+        # Left pane: form (fixed width)
+        left = ttk.Frame(container, padding=10, style="TFrame")
+        left.update_idletasks()
+        left_width = left.winfo_reqwidth()
+        left.config(width=left_width)
+        left.grid(row=0, column=0, sticky="ns")
+        left.grid_propagate(False)
 
-        # Right pane: "page"
-        right_container = tk.Frame(paned, bg="#FFFFFF", bd=1, relief="solid")
-        paned.add(right_container, weight=3)
+        # Right pane: "page" (expanding)
+        right_container = tk.Frame(container, bg="#FFFFFF", bd=1, relief="solid")
+        right_container.grid(row=0, column=1, sticky="nsew")
+        container.columnconfigure(1, weight=1)
         right = ttk.Frame(right_container, padding=10)
-        right.pack(fill="both", expand=True)
+        right.grid(row=0, column=0, sticky="nsew")
 
         # Form controls
         labels = [
