@@ -1,3 +1,4 @@
+import os
 import tkinter as tk
 from tkinter import ttk, filedialog
 from harper_calc.calculator import (
@@ -19,55 +20,63 @@ HELP_TEXT = (
 )
 
 
+class Tooltip:
+    """A simple tooltip for a widget."""
+    def __init__(self, widget, text, delay=500):
+        self.widget = widget
+        self.text = text
+        self.delay = delay
+        self._id = None
+        self.tipwindow = None
+        widget.bind("<Enter>", self._schedule)
+        widget.bind("<Leave>", self._hide)
+
+    def _schedule(self, _event=None):
+        self._hide()
+        self._id = self.widget.after(self.delay, self._show)
+
+    def _show(self):
+        if self.tipwindow:
+            return
+        x, y, cx, cy = self.widget.bbox("insert") if isinstance(self.widget, tk.Text) else (0, 0, 0, 0)
+        x = x + self.widget.winfo_rootx() + 20
+        y = y + self.widget.winfo_rooty() + 20
+        self.tipwindow = tw = tk.Toplevel(self.widget)
+        tw.wm_overrideredirect(True)
+        tw.wm_geometry(f"+{x}+{y}")
+        label = tk.Label(tw, text=self.text, background="#FFFFE0", relief="solid", borderwidth=1)
+        label.pack(ipadx=4, ipady=2)
+
+    def _hide(self, _event=None):
+        if self._id:
+            self.widget.after_cancel(self._id)
+            self._id = None
+        if self.tipwindow:
+            self.tipwindow.destroy()
+            self.tipwindow = None
+
+
 class CalculatorApp(tk.Tk):
-    """Simple GUI for the Harper nutrient loading calculator."""
+    """WordPad-style GUI for the Harper nutrient loading calculator."""
 
     def __init__(self):
         super().__init__()
         self.title("Harper Nutrient Calculator")
+        self.configure(bg="#DCE6F1")
         self.last_result = None
-        self._build_widgets()
+        self._setup_style()
         self._build_menu()
+        self._build_toolbar()
+        self._build_widgets()
 
-    def _build_widgets(self):
-        frame = ttk.Frame(self, padding="10")
-        frame.grid(row=0, column=0, sticky="nsew")
-
-        ttk.Label(frame, text="Land Use:").grid(row=0, column=0, sticky="w")
-        self.landuse_var = tk.StringVar(value="residential")
-        landuse_menu = ttk.OptionMenu(frame, self.landuse_var, "residential", *DEFAULT_EMC.keys())
-        landuse_menu.grid(row=0, column=1, sticky="ew")
-
-        ttk.Label(frame, text="Area (acres):").grid(row=1, column=0, sticky="w")
-        self.area_var = tk.StringVar()
-        ttk.Entry(frame, textvariable=self.area_var).grid(row=1, column=1, sticky="ew")
-
-        ttk.Label(frame, text="Rainfall (m):").grid(row=2, column=0, sticky="w")
-        self.rainfall_var = tk.StringVar(value="1.0")
-        ttk.Entry(frame, textvariable=self.rainfall_var).grid(row=2, column=1, sticky="ew")
-
-        ttk.Label(frame, text="Runoff Coefficient:").grid(row=3, column=0, sticky="w")
-        self.runoff_var = tk.StringVar()
-        ttk.Entry(frame, textvariable=self.runoff_var).grid(row=3, column=1, sticky="ew")
-
-        ttk.Label(frame, text="EMC TN (mg/L):").grid(row=4, column=0, sticky="w")
-        self.emc_tn_var = tk.StringVar()
-        ttk.Entry(frame, textvariable=self.emc_tn_var).grid(row=4, column=1, sticky="ew")
-
-        ttk.Label(frame, text="EMC TP (mg/L):").grid(row=5, column=0, sticky="w")
-        self.emc_tp_var = tk.StringVar()
-        ttk.Entry(frame, textvariable=self.emc_tp_var).grid(row=5, column=1, sticky="ew")
-
-        calc_btn = ttk.Button(frame, text="Calculate", command=self.calculate)
-        calc_btn.grid(row=6, column=0, columnspan=2, pady=(5, 0))
-
-        export_btn = ttk.Button(frame, text="Export PDF", command=self.export)
-        export_btn.grid(row=7, column=0, columnspan=2, pady=(5, 0))
-
-        self.results = tk.Text(frame, width=40, height=5, state="disabled")
-        self.results.grid(row=8, column=0, columnspan=2, pady=(5, 0))
-
-        frame.columnconfigure(1, weight=1)
+    def _setup_style(self):
+        style = ttk.Style(self)
+        default_font = ("Calibri", 11)
+        style.configure(".", font=default_font)
+        style.configure("TButton", padding=4)
+        style.configure("TEntry", padding=4)
+        style.configure("TLabel", padding=2)
+        self.option_add("*Font", default_font)
 
     def _build_menu(self):
         menu = tk.Menu(self)
@@ -82,6 +91,73 @@ class CalculatorApp(tk.Tk):
         menu.add_cascade(label="Help", menu=help_menu)
 
         self.config(menu=menu)
+
+    def _build_toolbar(self):
+        toolbar = tk.Frame(self, bg="#DCE6F1")
+        toolbar.pack(fill="x")
+        # Load icons from harper_calc/icons/<name>.png
+        self.icons = {}
+        icon_names = {"open": self.open_file, "save": self.save_file, "export": self.export}
+        for name, cmd in icon_names.items():
+            path = os.path.join(os.path.dirname(__file__), "icons", f"{name}.png")
+            try:
+                img = tk.PhotoImage(file=path)
+            except Exception:
+                img = tk.PhotoImage(width=1, height=1)  # placeholder
+            self.icons[name] = img
+            btn = tk.Button(toolbar, image=img, bg="#DCE6F1", bd=0, highlightthickness=0, command=cmd)
+            btn.pack(side="left", padx=2, pady=2)
+            Tooltip(btn, name.capitalize())
+
+    def _build_widgets(self):
+        paned = ttk.Panedwindow(self, orient=tk.HORIZONTAL)
+        paned.pack(fill="both", expand=True)
+
+        # Left pane: form
+        left = ttk.Frame(paned, padding=10, style="TFrame")
+        paned.add(left, weight=1)
+
+        # Right pane: "page"
+        right_container = tk.Frame(paned, bg="#FFFFFF", bd=1, relief="solid")
+        paned.add(right_container, weight=3)
+        right = ttk.Frame(right_container, padding=10)
+        right.pack(fill="both", expand=True)
+
+        # Form controls
+        labels = [
+            ("Land Use:", 0),
+            ("Area (acres):", 1),
+            ("Rainfall (m):", 2),
+            ("Runoff Coefficient:", 3),
+            ("EMC TN (mg/L):", 4),
+            ("EMC TP (mg/L):", 5),
+        ]
+        for text, row in labels:
+            ttk.Label(left, text=text).grid(row=row, column=0, sticky="w", pady=2)
+        self.landuse_var = tk.StringVar(value="residential")
+        landuse_menu = ttk.OptionMenu(left, self.landuse_var, "residential", *DEFAULT_EMC.keys())
+        landuse_menu.grid(row=0, column=1, sticky="ew", pady=2)
+        self.area_var = tk.StringVar()
+        ttk.Entry(left, textvariable=self.area_var).grid(row=1, column=1, sticky="ew", pady=2)
+        self.rainfall_var = tk.StringVar(value="1.0")
+        ttk.Entry(left, textvariable=self.rainfall_var).grid(row=2, column=1, sticky="ew", pady=2)
+        self.runoff_var = tk.StringVar()
+        ttk.Entry(left, textvariable=self.runoff_var).grid(row=3, column=1, sticky="ew", pady=2)
+        self.emc_tn_var = tk.StringVar()
+        ttk.Entry(left, textvariable=self.emc_tn_var).grid(row=4, column=1, sticky="ew", pady=2)
+        self.emc_tp_var = tk.StringVar()
+        ttk.Entry(left, textvariable=self.emc_tp_var).grid(row=5, column=1, sticky="ew", pady=2)
+
+        # Buttons
+        calc_btn = ttk.Button(left, text="Calculate", command=self.calculate)
+        calc_btn.grid(row=6, column=0, columnspan=2, pady=(10, 0), sticky="ew")
+        export_btn = ttk.Button(left, text="Export PDF", command=self.export)
+        export_btn.grid(row=7, column=0, columnspan=2, pady=(5, 0), sticky="ew")
+        left.columnconfigure(1, weight=1)
+
+        # Results text widget
+        self.results = tk.Text(right, wrap="word", state="disabled", bg="#FFFFFF")
+        self.results.pack(fill="both", expand=True)
 
     def calculate(self):
         try:
@@ -150,7 +226,6 @@ class CalculatorApp(tk.Tk):
         )
 
     def _set_site_data(self, data: SiteData) -> None:
-        # Keep current land use selection; just populate numeric fields
         self.area_var.set(str(data.area_acres))
         self.rainfall_var.set(str(data.annual_rainfall_m))
         self.runoff_var.set(str(data.runoff_coefficient))
