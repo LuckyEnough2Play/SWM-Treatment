@@ -14,8 +14,16 @@ def export_pdf(result: dict, filepath: str, *, data: SiteData | None = None) -> 
     text.setFont("Helvetica", 12)
     text.textLine("Harper Nutrient Loading Results")
     text.textLine("")
-    for key, value in result.items():
-        text.textLine(f"{key}: {value:.2f}")
+    ordered = [
+        ("runoff_volume_m3", "Runoff Volume (m^3)"),
+        ("TN_kg_per_yr", "TN Load (kg/yr)"),
+        ("TN_lb_per_yr", "TN Load (lb/yr)"),
+        ("TP_kg_per_yr", "TP Load (kg/yr)"),
+        ("TP_lb_per_yr", "TP Load (lb/yr)"),
+    ]
+    for key, label in ordered:
+        if key in result:
+            text.textLine(f"{label}: {result[key]:.2f}")
     if data is not None:
         text.textLine("")
         for line in format_breakdown(data, result).splitlines():

@@ -9,6 +9,7 @@ from harper_calc.calculator import (
     calculate_annual_load,
     calculate_runoff_volume,
     SiteData,
+    calculate_site_loads,
     format_breakdown,
     save_site_data,
     load_site_data,
@@ -35,13 +36,7 @@ def test_format_breakdown():
         emc_mg_per_L_TN=2.0,
         emc_mg_per_L_TP=0.5,
     )
-    result = {
-        "runoff_volume_m3": calculate_runoff_volume(
-            data.area_acres, data.annual_rainfall_m, data.runoff_coefficient
-        ),
-        "TN_kg_per_yr": 1.0,
-        "TP_kg_per_yr": 0.25,
-    }
+    result = calculate_site_loads(data)
     text = format_breakdown(data, result)
     assert "Runoff Volume" in text and "TN Load" in text
 

@@ -53,8 +53,8 @@ def main(argv=None):
     result = calculate_site_loads(site_data)
 
     print(f"Annual Runoff Volume (m^3): {result['runoff_volume_m3']:.2f}")
-    print(f"Annual TN Load (kg/yr): {result['TN_kg_per_yr']:.2f}")
-    print(f"Annual TP Load (kg/yr): {result['TP_kg_per_yr']:.2f}")
+    print(f"Annual TN Load (kg/yr): {result['TN_kg_per_yr']:.2f} ({result['TN_lb_per_yr']:.2f} lb/yr)")
+    print(f"Annual TP Load (kg/yr): {result['TP_kg_per_yr']:.2f} ({result['TP_lb_per_yr']:.2f} lb/yr)")
 
     if args.save:
         save_site_data(site_data, args.save)

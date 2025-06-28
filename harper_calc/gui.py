@@ -68,6 +68,7 @@ class CalculatorApp(tk.Tk):
         self._build_menu()
         self._build_toolbar()
         self._build_widgets()
+        self.calculate()
 
     def _setup_style(self):
         style = ttk.Style(self)
@@ -145,16 +146,32 @@ class CalculatorApp(tk.Tk):
         self.landuse_var = tk.StringVar(value="residential")
         landuse_menu = ttk.OptionMenu(left, self.landuse_var, "residential", *DEFAULT_EMC.keys())
         landuse_menu.grid(row=0, column=1, sticky="ew", pady=2)
+        Tooltip(landuse_menu, "Land use category affecting defaults")
         self.area_var = tk.StringVar()
-        ttk.Entry(left, textvariable=self.area_var).grid(row=1, column=1, sticky="ew", pady=2)
+        area_entry = ttk.Entry(left, textvariable=self.area_var)
+        area_entry.grid(row=1, column=1, sticky="ew", pady=2)
+        Tooltip(area_entry, "Drainage area in acres")
         self.rainfall_var = tk.StringVar(value="1.0")
-        ttk.Entry(left, textvariable=self.rainfall_var).grid(row=2, column=1, sticky="ew", pady=2)
+        rain_entry = ttk.Entry(left, textvariable=self.rainfall_var)
+        rain_entry.grid(row=2, column=1, sticky="ew", pady=2)
+        Tooltip(rain_entry, "Annual rainfall depth in meters")
         self.runoff_var = tk.StringVar()
-        ttk.Entry(left, textvariable=self.runoff_var).grid(row=3, column=1, sticky="ew", pady=2)
+        runoff_entry = ttk.Entry(left, textvariable=self.runoff_var)
+        runoff_entry.grid(row=3, column=1, sticky="ew", pady=2)
+        Tooltip(runoff_entry, "Runoff coefficient")
         self.emc_tn_var = tk.StringVar()
-        ttk.Entry(left, textvariable=self.emc_tn_var).grid(row=4, column=1, sticky="ew", pady=2)
+        tn_entry = ttk.Entry(left, textvariable=self.emc_tn_var)
+        tn_entry.grid(row=4, column=1, sticky="ew", pady=2)
+        Tooltip(tn_entry, "Total Nitrogen EMC (mg/L)")
         self.emc_tp_var = tk.StringVar()
-        ttk.Entry(left, textvariable=self.emc_tp_var).grid(row=5, column=1, sticky="ew", pady=2)
+        tp_entry = ttk.Entry(left, textvariable=self.emc_tp_var)
+        tp_entry.grid(row=5, column=1, sticky="ew", pady=2)
+        Tooltip(tp_entry, "Total Phosphorus EMC (mg/L)")
+
+        # trigger calculations on input change
+        vars_to_trace = [self.landuse_var, self.area_var, self.rainfall_var, self.runoff_var, self.emc_tn_var, self.emc_tp_var]
+        for var in vars_to_trace:
+            var.trace_add("write", lambda *_, v=var: self.calculate())
 
         # Buttons
         calc_btn = ttk.Button(left, text="Calculate", command=self.calculate)
@@ -191,8 +208,8 @@ class CalculatorApp(tk.Tk):
         self.last_result = (result, data)
         output = (
             f"Runoff Volume (m^3): {result['runoff_volume_m3']:.2f}\n"
-            f"TN Load (kg/yr): {result['TN_kg_per_yr']:.2f}\n"
-            f"TP Load (kg/yr): {result['TP_kg_per_yr']:.2f}\n\n"
+            f"TN Load (kg/yr): {result['TN_kg_per_yr']:.2f} ({result['TN_lb_per_yr']:.2f} lb/yr)\n"
+            f"TP Load (kg/yr): {result['TP_kg_per_yr']:.2f} ({result['TP_lb_per_yr']:.2f} lb/yr)\n\n"
             f"{format_breakdown(data, result)}"
         )
         self._update_results(output)
