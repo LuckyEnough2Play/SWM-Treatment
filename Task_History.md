@@ -17,4 +17,3 @@ This document tracks progress on tasks derived from the PRD.
 | 11 | Support & Maintenance | Completed | GitHub issues and version tagging documented. | 2025-06-29 |
 
 Update the **Status**, **Notes**, and **Completed On** fields as work progresses.
-
