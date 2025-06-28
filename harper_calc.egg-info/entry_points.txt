@@ -1,0 +1,2 @@
+[console_scripts]
+harper-calc = harper_calc.cli:main
