@@ -37,3 +37,11 @@ python -m harper_calc.cli --area 1.0 --save myscenario.json
 ```bash
 pytest
 ```
+
+## Packaging
+Standalone executables can be created with PyInstaller. See the
+[developer guide](docs/DEVELOPER_GUIDE.md#packaging) for detailed steps.
+
+## Support
+For issue reporting and maintenance policies, see
+[docs/SUPPORT_PLAN.md](docs/SUPPORT_PLAN.md).

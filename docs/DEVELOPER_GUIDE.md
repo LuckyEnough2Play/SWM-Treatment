@@ -22,3 +22,31 @@ This project is a prototype for calculating stormwater nutrient loads.
 - Follow PEP 8 style conventions.
 - Add tests for new features.
 - Update `Task_History.md` when tasks change status.
+
+See [SUPPORT_PLAN.md](SUPPORT_PLAN.md) for issue reporting and release
+policies.
+
+## Packaging
+To create standalone executables for distribution, build the project with
+PyInstaller on each target platform.
+
+Install PyInstaller:
+
+```bash
+pip install pyinstaller
+```
+
+Build for Linux:
+
+```bash
+pyinstaller --onefile --name harper_calc harper_calc/cli.py
+```
+
+Build for Windows (run in a Windows environment):
+
+```bash
+pyinstaller --onefile --name harper_calc.exe harper_calc/cli.py
+```
+
+The resulting executables are located in the `dist/` directory of the build
+machine. Copy the appropriate binary to users as needed.
