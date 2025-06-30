@@ -96,7 +96,7 @@ class CalculatorApp(tk.Tk):
 
     def _build_toolbar(self):
         toolbar = tk.Frame(self, bg="#DCE6F1")
-        toolbar.pack(fill="x")
+        toolbar.grid(row=0, column=0, sticky="ew")
         # Load icons from harper_calc/icons/<name>.png
         self.icons = {}
         icon_names = {"open": self.open_file, "save": self.save_file, "export": self.export}
@@ -114,8 +114,8 @@ class CalculatorApp(tk.Tk):
     def _build_widgets(self):
         # Use grid layout for fixed left pane and expanding right pane
         container = tk.Frame(self)
-        container.grid(row=0, column=0, sticky="nsew")
-        self.rowconfigure(0, weight=1)
+        container.grid(row=1, column=0, sticky="nsew")
+        self.rowconfigure(1, weight=1)
         self.columnconfigure(0, weight=1)
 
         # Left pane: form (fixed width)
