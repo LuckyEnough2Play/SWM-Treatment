@@ -69,6 +69,7 @@ class CalculatorApp(tk.Tk):
         self._build_menu()
         self._build_toolbar()
         self._build_widgets()
+        self._update_defaults()
         self.calculate()
 
     def _setup_style(self):
@@ -118,9 +119,15 @@ class CalculatorApp(tk.Tk):
         self.rowconfigure(1, weight=1)
         self.columnconfigure(0, weight=1)
 
-        # Left pane: form (fixed width)
+        # Left pane with notebook
         left = ttk.Frame(container, padding=10, style="TFrame")
         left.grid(row=0, column=0, sticky="ns")
+        notebook = ttk.Notebook(left)
+        notebook.grid(row=0, column=0, sticky="nsew")
+        inputs = ttk.Frame(notebook)
+        layout_tab = ttk.Frame(notebook)
+        notebook.add(inputs, text="Inputs")
+        notebook.add(layout_tab, text="Layout")
 
         # Right pane: "page" (expanding)
         right_container = tk.Frame(container, bg="#FFFFFF", bd=1, relief="solid")
@@ -134,44 +141,45 @@ class CalculatorApp(tk.Tk):
             ("Project Name:", 0),
             ("Land Use:", 1),
             ("Area (acres):", 2),
-            ("Rainfall (m):", 3),
+            ("Rainfall (in):", 3),
             ("Runoff Coefficient:", 4),
             ("EMC TN (mg/L):", 5),
             ("EMC TP (mg/L):", 6),
         ]
         for text, row in labels:
-            ttk.Label(left, text=text).grid(row=row, column=0, sticky="w", pady=2)
+            ttk.Label(inputs, text=text).grid(row=row, column=0, sticky="w", pady=2)
         self.project_name_var = tk.StringVar()
-        project_entry = ttk.Entry(left, textvariable=self.project_name_var)
+        project_entry = ttk.Entry(inputs, textvariable=self.project_name_var)
         project_entry.grid(row=0, column=1, sticky="ew", pady=2)
         Tooltip(project_entry, "Project name for report header")
         self.landuse_var = tk.StringVar(value="residential")
-        landuse_menu = ttk.OptionMenu(left, self.landuse_var, "residential", *DEFAULT_EMC.keys())
+        landuse_menu = ttk.OptionMenu(inputs, self.landuse_var, "residential", *DEFAULT_EMC.keys())
         landuse_menu.grid(row=1, column=1, sticky="ew", pady=2)
         Tooltip(landuse_menu, "Land use category affecting defaults")
-        self.area_var = tk.StringVar()
-        area_entry = ttk.Entry(left, textvariable=self.area_var)
+        self.landuse_var.trace_add("write", self._update_defaults)
+        self.area_var = tk.StringVar(value="1.0")
+        area_entry = ttk.Entry(inputs, textvariable=self.area_var)
         area_entry.grid(row=2, column=1, sticky="ew", pady=2)
         Tooltip(area_entry, "Drainage area in acres")
-        self.rainfall_var = tk.StringVar(value="1.0")
-        rain_entry = ttk.Entry(left, textvariable=self.rainfall_var)
+        self.rainfall_var = tk.StringVar(value="50")
+        rain_entry = ttk.Entry(inputs, textvariable=self.rainfall_var)
         rain_entry.grid(row=3, column=1, sticky="ew", pady=2)
-        Tooltip(rain_entry, "Annual rainfall depth in meters")
+        Tooltip(rain_entry, "Annual rainfall depth in inches")
         self.runoff_var = tk.StringVar()
-        runoff_entry = ttk.Entry(left, textvariable=self.runoff_var)
+        runoff_entry = ttk.Entry(inputs, textvariable=self.runoff_var, state="readonly")
         runoff_entry.grid(row=4, column=1, sticky="ew", pady=2)
         Tooltip(runoff_entry, "Runoff coefficient")
         self.emc_tn_var = tk.StringVar()
-        tn_entry = ttk.Entry(left, textvariable=self.emc_tn_var)
+        tn_entry = ttk.Entry(inputs, textvariable=self.emc_tn_var, state="readonly")
         tn_entry.grid(row=5, column=1, sticky="ew", pady=2)
         Tooltip(tn_entry, "Total Nitrogen EMC (mg/L)")
         self.emc_tp_var = tk.StringVar()
-        tp_entry = ttk.Entry(left, textvariable=self.emc_tp_var)
+        tp_entry = ttk.Entry(inputs, textvariable=self.emc_tp_var, state="readonly")
         tp_entry.grid(row=6, column=1, sticky="ew", pady=2)
         Tooltip(tp_entry, "Total Phosphorus EMC (mg/L)")
 
-        margin_frame = ttk.LabelFrame(left, text="Margins (in)")
-        margin_frame.grid(row=7, column=0, columnspan=2, pady=(10, 0), sticky="ew")
+        margin_frame = ttk.LabelFrame(layout_tab, text="Margins (in)")
+        margin_frame.grid(row=0, column=0, pady=(10, 0), sticky="ew")
         self.left_margin_var = tk.DoubleVar(value=0.5)
         self.right_margin_var = tk.DoubleVar(value=0.5)
         self.top_margin_var = tk.DoubleVar(value=1.0)
@@ -188,16 +196,13 @@ class CalculatorApp(tk.Tk):
             var.trace_add("write", lambda *_: self._update_preview())
 
         # trigger calculations on input change
-        vars_to_trace = [self.landuse_var, self.area_var, self.rainfall_var, self.runoff_var, self.emc_tn_var, self.emc_tp_var, self.project_name_var]
+        vars_to_trace = [self.landuse_var, self.area_var, self.rainfall_var, self.project_name_var]
         for var in vars_to_trace:
             var.trace_add("write", lambda *_, v=var: self.calculate())
 
-        # Buttons
-        calc_btn = ttk.Button(left, text="Calculate", command=self.calculate)
-        calc_btn.grid(row=8, column=0, columnspan=2, pady=(10, 0), sticky="ew")
-        export_btn = ttk.Button(left, text="Export PDF", command=self.export)
-        export_btn.grid(row=9, column=0, columnspan=2, pady=(5, 0), sticky="ew")
-        left.columnconfigure(1, weight=1)
+        # Layout tab additional info
+        layout_tab.columnconfigure(1, weight=1)
+        left.columnconfigure(0, weight=1)
 
         # Print preview canvas and rulers
         self.scale = 40  # pixels per inch
@@ -215,11 +220,17 @@ class CalculatorApp(tk.Tk):
         right.columnconfigure(0, weight=1)
         self._update_preview()
 
+    def _update_defaults(self, *_):
+        landuse = self.landuse_var.get()
+        self.runoff_var.set(str(RUNOFF_COEFFICIENT[landuse]))
+        self.emc_tn_var.set(str(DEFAULT_EMC[landuse]["TN"]))
+        self.emc_tp_var.set(str(DEFAULT_EMC[landuse]["TP"]))
+
     def calculate(self):
         try:
             landuse = self.landuse_var.get()
             area = float(self.area_var.get())
-            rainfall = float(self.rainfall_var.get())
+            rainfall = float(self.rainfall_var.get()) * 0.0254
             runoff = float(self.runoff_var.get()) if self.runoff_var.get() else RUNOFF_COEFFICIENT[landuse]
             emc_tn = float(self.emc_tn_var.get()) if self.emc_tn_var.get() else DEFAULT_EMC[landuse]["TN"]
             emc_tp = float(self.emc_tp_var.get()) if self.emc_tp_var.get() else DEFAULT_EMC[landuse]["TP"]
@@ -284,7 +295,7 @@ class CalculatorApp(tk.Tk):
     def _gather_site_data(self) -> SiteData:
         return SiteData(
             area_acres=float(self.area_var.get()),
-            annual_rainfall_m=float(self.rainfall_var.get()),
+            annual_rainfall_m=float(self.rainfall_var.get()) * 0.0254,
             runoff_coefficient=float(self.runoff_var.get()) if self.runoff_var.get() else RUNOFF_COEFFICIENT[self.landuse_var.get()],
             emc_mg_per_L_TN=float(self.emc_tn_var.get()) if self.emc_tn_var.get() else DEFAULT_EMC[self.landuse_var.get()]["TN"],
             emc_mg_per_L_TP=float(self.emc_tp_var.get()) if self.emc_tp_var.get() else DEFAULT_EMC[self.landuse_var.get()]["TP"],
@@ -292,10 +303,11 @@ class CalculatorApp(tk.Tk):
 
     def _set_site_data(self, data: SiteData) -> None:
         self.area_var.set(str(data.area_acres))
-        self.rainfall_var.set(str(data.annual_rainfall_m))
+        self.rainfall_var.set(str(data.annual_rainfall_m / 0.0254))
         self.runoff_var.set(str(data.runoff_coefficient))
         self.emc_tn_var.set(str(data.emc_mg_per_L_TN))
         self.emc_tp_var.set(str(data.emc_mg_per_L_TP))
+        self._update_defaults()
 
     def _update_results(self, text: str):
         self.current_text = text
@@ -354,10 +366,10 @@ class CalculatorApp(tk.Tk):
         r = page_w - self.right_margin_var.get() * self.scale
         t = self.top_margin_var.get() * self.scale
         b = page_h - self.bottom_margin_var.get() * self.scale
-        self.left_handle = self.top_ruler.create_polygon(l, 0, l - 5, 10, l + 5, 10, fill="blue", tags="left_handle")
-        self.right_handle = self.top_ruler.create_polygon(r, 0, r - 5, 10, r + 5, 10, fill="blue", tags="right_handle")
-        self.top_handle = self.right_ruler.create_polygon(10, t, 0, t - 5, 0, t + 5, fill="blue", tags="top_handle")
-        self.bottom_handle = self.right_ruler.create_polygon(10, b, 0, b - 5, 0, b + 5, fill="blue", tags="bottom_handle")
+        self.left_handle = self.top_ruler.create_rectangle(l - 4, 0, l + 4, 10, fill="blue", tags="left_handle")
+        self.right_handle = self.top_ruler.create_rectangle(r - 4, 0, r + 4, 10, fill="blue", tags="right_handle")
+        self.top_handle = self.right_ruler.create_rectangle(0, t - 4, 10, t + 4, fill="blue", tags="top_handle")
+        self.bottom_handle = self.right_ruler.create_rectangle(0, b - 4, 10, b + 4, fill="blue", tags="bottom_handle")
         self.top_ruler.tag_bind("left_handle", "<B1-Motion>", lambda e: self._handle_drag(e.x, 'left'))
         self.top_ruler.tag_bind("right_handle", "<B1-Motion>", lambda e: self._handle_drag(e.x, 'right'))
         self.right_ruler.tag_bind("top_handle", "<B1-Motion>", lambda e: self._handle_drag(e.y, 'top'))

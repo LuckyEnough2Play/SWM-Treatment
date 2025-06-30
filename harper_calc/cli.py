@@ -18,7 +18,12 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description="Harper Nutrient Loading Calculator")
     parser.add_argument("--landuse", choices=DEFAULT_EMC.keys(), default="residential", help="Land use type")
     parser.add_argument("--area", type=float, help="Site area in acres")
-    parser.add_argument("--rainfall", type=float, default=1.0, help="Annual rainfall in meters")
+    parser.add_argument(
+        "--rainfall",
+        type=float,
+        default=50.0,
+        help="Annual rainfall in inches",
+    )
     parser.add_argument("--emc_tn", type=float, help="Override TN EMC in mg/L")
     parser.add_argument("--emc_tp", type=float, help="Override TP EMC in mg/L")
     parser.add_argument("--runoff_coeff", type=float, help="Override runoff coefficient")
@@ -80,8 +85,10 @@ def main(argv=None):
     )
 
     area = args.area if args.area is not None else (loaded.area_acres if loaded else None)
-    rainfall = args.rainfall if args.rainfall is not None else (
-        loaded.annual_rainfall_m if loaded else None
+    rainfall = (
+        args.rainfall * 0.0254
+        if args.rainfall is not None
+        else (loaded.annual_rainfall_m if loaded else None)
     )
     if area is None:
         parser.error("--area is required if not loaded from file")
