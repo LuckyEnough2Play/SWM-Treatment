@@ -45,3 +45,6 @@ Standalone executables can be created with PyInstaller. See the
 ## Support
 For issue reporting and maintenance policies, see
 [docs/SUPPORT_PLAN.md](docs/SUPPORT_PLAN.md).
+
+## Harper Tables
+All tables extracted from the Harper Stormwater Treatment Report are organized in the `harper_tables/` directory. Each Markdown file contains the raw text for an individual table or table continuation.
