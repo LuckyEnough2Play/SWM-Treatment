@@ -31,26 +31,36 @@ See [SUPPORT_PLAN.md](SUPPORT_PLAN.md) for issue reporting and release
 policies.
 
 ## Packaging
-To create standalone executables for distribution, build the project with
-PyInstaller on each target platform.
-
-Install PyInstaller:
+Create standalone executables with **PyInstaller**. Install it first:
 
 ```bash
 pip install pyinstaller
 ```
 
-Build for Linux:
+### Command line tool
+
+Build the CLI for each platform:
 
 ```bash
+# Linux
 pyinstaller --onefile --name harper_calc harper_calc/cli.py
-```
 
-Build for Windows (run in a Windows environment):
-
-```bash
+# Windows
 pyinstaller --onefile --name harper_calc.exe harper_calc/cli.py
 ```
 
-The resulting executables are located in the `dist/` directory of the build
-machine. Copy the appropriate binary to users as needed.
+### Graphical interface
+
+Use the same approach for the GUI application:
+
+```bash
+# Linux
+pyinstaller --windowed --onefile --name harper_gui harper_calc/gui.py
+
+# Windows
+pyinstaller --windowed --onefile --name harper_gui.exe harper_calc/gui.py
+```
+
+If the Windows build fails with a `PermissionError` on `harper_gui.exe`, ensure no prior copy of the file is running or locked. Removing the old executable from `dist/` before rerunning PyInstaller usually resolves the issue.
+
+The resulting executables will appear in the `dist/` directory. Copy the appropriate binary to users as needed.
