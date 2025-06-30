@@ -64,6 +64,7 @@ class CalculatorApp(tk.Tk):
         self.title("Harper Nutrient Calculator")
         self.configure(bg="#DCE6F1")
         self.last_result = None
+        self.current_text = ""
         self._setup_style()
         self._build_menu()
         self._build_toolbar()
@@ -134,55 +135,89 @@ class CalculatorApp(tk.Tk):
 
         # Form controls
         labels = [
-            ("Land Use:", 0),
-            ("Area (acres):", 1),
-            ("Rainfall (m):", 2),
-            ("Runoff Coefficient:", 3),
-            ("EMC TN (mg/L):", 4),
-            ("EMC TP (mg/L):", 5),
+            ("Project Name:", 0),
+            ("Land Use:", 1),
+            ("Area (acres):", 2),
+            ("Rainfall (m):", 3),
+            ("Runoff Coefficient:", 4),
+            ("EMC TN (mg/L):", 5),
+            ("EMC TP (mg/L):", 6),
         ]
         for text, row in labels:
             ttk.Label(left, text=text).grid(row=row, column=0, sticky="w", pady=2)
+        self.project_name_var = tk.StringVar()
+        project_entry = ttk.Entry(left, textvariable=self.project_name_var)
+        project_entry.grid(row=0, column=1, sticky="ew", pady=2)
+        Tooltip(project_entry, "Project name for report header")
         self.landuse_var = tk.StringVar(value="residential")
         landuse_menu = ttk.OptionMenu(left, self.landuse_var, "residential", *DEFAULT_EMC.keys())
-        landuse_menu.grid(row=0, column=1, sticky="ew", pady=2)
+        landuse_menu.grid(row=1, column=1, sticky="ew", pady=2)
         Tooltip(landuse_menu, "Land use category affecting defaults")
         self.area_var = tk.StringVar()
         area_entry = ttk.Entry(left, textvariable=self.area_var)
-        area_entry.grid(row=1, column=1, sticky="ew", pady=2)
+        area_entry.grid(row=2, column=1, sticky="ew", pady=2)
         Tooltip(area_entry, "Drainage area in acres")
         self.rainfall_var = tk.StringVar(value="1.0")
         rain_entry = ttk.Entry(left, textvariable=self.rainfall_var)
-        rain_entry.grid(row=2, column=1, sticky="ew", pady=2)
+        rain_entry.grid(row=3, column=1, sticky="ew", pady=2)
         Tooltip(rain_entry, "Annual rainfall depth in meters")
         self.runoff_var = tk.StringVar()
         runoff_entry = ttk.Entry(left, textvariable=self.runoff_var)
-        runoff_entry.grid(row=3, column=1, sticky="ew", pady=2)
+        runoff_entry.grid(row=4, column=1, sticky="ew", pady=2)
         Tooltip(runoff_entry, "Runoff coefficient")
         self.emc_tn_var = tk.StringVar()
         tn_entry = ttk.Entry(left, textvariable=self.emc_tn_var)
-        tn_entry.grid(row=4, column=1, sticky="ew", pady=2)
+        tn_entry.grid(row=5, column=1, sticky="ew", pady=2)
         Tooltip(tn_entry, "Total Nitrogen EMC (mg/L)")
         self.emc_tp_var = tk.StringVar()
         tp_entry = ttk.Entry(left, textvariable=self.emc_tp_var)
-        tp_entry.grid(row=5, column=1, sticky="ew", pady=2)
+        tp_entry.grid(row=6, column=1, sticky="ew", pady=2)
         Tooltip(tp_entry, "Total Phosphorus EMC (mg/L)")
 
+        margin_frame = ttk.LabelFrame(left, text="Margins (in)")
+        margin_frame.grid(row=7, column=0, columnspan=2, pady=(10, 0), sticky="ew")
+        self.left_margin_var = tk.DoubleVar(value=0.5)
+        self.right_margin_var = tk.DoubleVar(value=0.5)
+        self.top_margin_var = tk.DoubleVar(value=1.0)
+        self.bottom_margin_var = tk.DoubleVar(value=1.0)
+        ttk.Label(margin_frame, text="Left").grid(row=0, column=0, sticky="w")
+        ttk.Entry(margin_frame, textvariable=self.left_margin_var, width=5).grid(row=0, column=1, padx=2)
+        ttk.Label(margin_frame, text="Right").grid(row=0, column=2, sticky="w")
+        ttk.Entry(margin_frame, textvariable=self.right_margin_var, width=5).grid(row=0, column=3, padx=2)
+        ttk.Label(margin_frame, text="Top").grid(row=1, column=0, sticky="w")
+        ttk.Entry(margin_frame, textvariable=self.top_margin_var, width=5).grid(row=1, column=1, padx=2)
+        ttk.Label(margin_frame, text="Bottom").grid(row=1, column=2, sticky="w")
+        ttk.Entry(margin_frame, textvariable=self.bottom_margin_var, width=5).grid(row=1, column=3, padx=2)
+        for var in (self.left_margin_var, self.right_margin_var, self.top_margin_var, self.bottom_margin_var):
+            var.trace_add("write", lambda *_: self._update_preview())
+
         # trigger calculations on input change
-        vars_to_trace = [self.landuse_var, self.area_var, self.rainfall_var, self.runoff_var, self.emc_tn_var, self.emc_tp_var]
+        vars_to_trace = [self.landuse_var, self.area_var, self.rainfall_var, self.runoff_var, self.emc_tn_var, self.emc_tp_var, self.project_name_var]
         for var in vars_to_trace:
             var.trace_add("write", lambda *_, v=var: self.calculate())
 
         # Buttons
         calc_btn = ttk.Button(left, text="Calculate", command=self.calculate)
-        calc_btn.grid(row=6, column=0, columnspan=2, pady=(10, 0), sticky="ew")
+        calc_btn.grid(row=8, column=0, columnspan=2, pady=(10, 0), sticky="ew")
         export_btn = ttk.Button(left, text="Export PDF", command=self.export)
-        export_btn.grid(row=7, column=0, columnspan=2, pady=(5, 0), sticky="ew")
+        export_btn.grid(row=9, column=0, columnspan=2, pady=(5, 0), sticky="ew")
         left.columnconfigure(1, weight=1)
 
-        # Results text widget
-        self.results = tk.Text(right, wrap="word", state="disabled", bg="#FFFFFF")
-        self.results.pack(fill="both", expand=True)
+        # Print preview canvas and rulers
+        self.scale = 40  # pixels per inch
+        page_w = int(8.5 * self.scale)
+        page_h = int(11 * self.scale)
+
+        self.top_ruler = tk.Canvas(right, height=20, width=page_w, bg="#f0f0f0")
+        self.top_ruler.grid(row=0, column=0, sticky="ew")
+        self.right_ruler = tk.Canvas(right, width=20, height=page_h, bg="#f0f0f0")
+        self.right_ruler.grid(row=1, column=1, sticky="ns")
+
+        self.page_canvas = tk.Canvas(right, width=page_w, height=page_h, bg="white", highlightthickness=1, highlightbackground="black")
+        self.page_canvas.grid(row=1, column=0)
+        right.rowconfigure(1, weight=1)
+        right.columnconfigure(0, weight=1)
+        self._update_preview()
 
     def calculate(self):
         try:
@@ -223,7 +258,16 @@ class CalculatorApp(tk.Tk):
             filetypes=[("PDF files", "*.pdf")],
         )
         if filepath:
-            export_pdf(result, filepath, data=data)
+            export_pdf(
+                result,
+                filepath,
+                data=data,
+                project_name=self.project_name_var.get() or None,
+                left_margin=self.left_margin_var.get(),
+                right_margin=self.right_margin_var.get(),
+                top_margin=self.top_margin_var.get(),
+                bottom_margin=self.bottom_margin_var.get(),
+            )
 
     def save_file(self):
         filepath = filedialog.asksaveasfilename(
@@ -258,10 +302,30 @@ class CalculatorApp(tk.Tk):
         self.emc_tp_var.set(str(data.emc_mg_per_L_TP))
 
     def _update_results(self, text: str):
-        self.results.configure(state="normal")
-        self.results.delete("1.0", tk.END)
-        self.results.insert(tk.END, text)
-        self.results.configure(state="disabled")
+        self.current_text = text
+        self._update_preview()
+
+    def _update_preview(self):
+        if not hasattr(self, "page_canvas"):
+            return
+        self.page_canvas.delete("all")
+        page_w = int(8.5 * self.scale)
+        page_h = int(11 * self.scale)
+        l = self.left_margin_var.get() * self.scale
+        r = self.right_margin_var.get() * self.scale
+        t = self.top_margin_var.get() * self.scale
+        b = self.bottom_margin_var.get() * self.scale
+        self.page_canvas.create_rectangle(0, 0, page_w, page_h, fill="white", outline="black")
+        self.page_canvas.create_rectangle(l, t, page_w - r, page_h - b, dash=(4, 2))
+        self.page_canvas.create_text(
+            l,
+            t,
+            text=self.current_text,
+            anchor="nw",
+            font=("Helvetica", 10),
+            width=page_w - l - r,
+        )
+        self._draw_rulers()
 
     def show_help(self):
         win = tk.Toplevel(self)
@@ -270,6 +334,51 @@ class CalculatorApp(tk.Tk):
         text.insert("1.0", HELP_TEXT)
         text.configure(state="disabled")
         text.pack(fill="both", expand=True, padx=10, pady=10)
+
+    def _draw_rulers(self):
+        page_w = int(8.5 * self.scale)
+        page_h = int(11 * self.scale)
+        self.top_ruler.delete("all")
+        self.right_ruler.delete("all")
+        for i in range(int(8.5) + 1):
+            x = i * self.scale
+            self.top_ruler.create_line(x, 10, x, 20)
+            self.top_ruler.create_text(x, 8, text=str(i), anchor="s", font=("Helvetica", 7))
+            if i < int(8.5):
+                self.top_ruler.create_line(x + self.scale / 2, 15, x + self.scale / 2, 20)
+        for i in range(int(11) + 1):
+            y = i * self.scale
+            self.right_ruler.create_line(0, y, 10, y)
+            self.right_ruler.create_text(12, y, text=str(i), anchor="w", font=("Helvetica", 7))
+            if i < int(11):
+                self.right_ruler.create_line(0, y + self.scale / 2, 5, y + self.scale / 2)
+
+        # handles
+        l = self.left_margin_var.get() * self.scale
+        r = page_w - self.right_margin_var.get() * self.scale
+        t = self.top_margin_var.get() * self.scale
+        b = page_h - self.bottom_margin_var.get() * self.scale
+        self.left_handle = self.top_ruler.create_polygon(l, 0, l - 5, 10, l + 5, 10, fill="blue", tags="left_handle")
+        self.right_handle = self.top_ruler.create_polygon(r, 0, r - 5, 10, r + 5, 10, fill="blue", tags="right_handle")
+        self.top_handle = self.right_ruler.create_polygon(10, t, 0, t - 5, 0, t + 5, fill="blue", tags="top_handle")
+        self.bottom_handle = self.right_ruler.create_polygon(10, b, 0, b - 5, 0, b + 5, fill="blue", tags="bottom_handle")
+        self.top_ruler.tag_bind("left_handle", "<B1-Motion>", lambda e: self._handle_drag(e.x, 'left'))
+        self.top_ruler.tag_bind("right_handle", "<B1-Motion>", lambda e: self._handle_drag(e.x, 'right'))
+        self.right_ruler.tag_bind("top_handle", "<B1-Motion>", lambda e: self._handle_drag(e.y, 'top'))
+        self.right_ruler.tag_bind("bottom_handle", "<B1-Motion>", lambda e: self._handle_drag(e.y, 'bottom'))
+
+    def _handle_drag(self, pos, which):
+        value = pos / self.scale
+        if which == 'left':
+            self.left_margin_var.set(max(0, min(value, 3)))
+        elif which == 'right':
+            page_w = 8.5
+            self.right_margin_var.set(max(0, min(page_w - value, 3)))
+        elif which == 'top':
+            self.top_margin_var.set(max(0, min(value, 3)))
+        elif which == 'bottom':
+            page_h = 11
+            self.bottom_margin_var.set(max(0, min(page_h - value, 3)))
 
 
 def main():
