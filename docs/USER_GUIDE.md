@@ -22,7 +22,19 @@ Run the calculator from the command line:
 ```bash
 python -m harper_calc.cli --landuse residential --area 2.5 --rainfall 1.2
 ```
-Optional flags allow overriding defaults or loading/saving JSON scenarios.
+Optional flags allow overriding defaults or loading/saving JSON scenarios. To
+aggregate multiple subareas provide a JSON file:
+```bash
+python -m harper_calc.cli --subareas subareas.json
+```
+To compare pre- and post-development scenarios:
+```bash
+python -m harper_calc.cli --pre pre.json --post post.json
+```
+To evaluate treatment performance:
+```bash
+python -m harper_calc.cli --area 1.0 --treatment dry_detention_filtration
+```
 
 ## Method Overview
 Runoff volume is calculated as:

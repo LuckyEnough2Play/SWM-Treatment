@@ -5,6 +5,11 @@ from harper_calc.calculator import (
     calculate_site_loads,
     load_site_data,
     save_site_data,
+    aggregate_site_loads,
+    load_subareas,
+    compare_scenarios,
+    apply_treatment,
+    TREATMENT_EFFICIENCY,
 )
 from harper_calc.defaults import DEFAULT_EMC, RUNOFF_COEFFICIENT
 
@@ -19,8 +24,47 @@ def main(argv=None):
     parser.add_argument("--runoff_coeff", type=float, help="Override runoff coefficient")
     parser.add_argument("--load", type=str, help="Load site data from JSON file")
     parser.add_argument("--save", type=str, help="Save site data to JSON file")
+    parser.add_argument("--subareas", type=str, help="JSON file with list of subareas")
+    parser.add_argument("--pre", type=str, help="JSON file for pre-development subareas")
+    parser.add_argument("--post", type=str, help="JSON file for post-development subareas")
+    parser.add_argument("--treatment", choices=list(TREATMENT_EFFICIENCY.keys()), help="Apply treatment type to results")
 
     args = parser.parse_args(argv)
+
+    if args.pre and args.post:
+        pre = load_subareas(args.pre)
+        post = load_subareas(args.post)
+        comp = compare_scenarios(pre, post)
+        post_result = comp["post"]
+        if args.treatment:
+            post_result = apply_treatment(post_result, args.treatment)
+        print(
+            f"Pre-development TN Load (kg/yr): {comp['pre']['TN_kg_per_yr']:.2f}"
+        )
+        print(
+            f"Post-development TN Load (kg/yr): {post_result['TN_kg_per_yr']:.2f}"
+        )
+        tn_ok = post_result["TN_kg_per_yr"] <= comp["pre"]["TN_kg_per_yr"]
+        tp_ok = post_result["TP_kg_per_yr"] <= comp["pre"]["TP_kg_per_yr"]
+        if tn_ok and tp_ok:
+            print("No net increase achieved.")
+        else:
+            print("No net increase NOT achieved.")
+        return
+
+    if args.subareas:
+        subareas = load_subareas(args.subareas)
+        result = aggregate_site_loads(subareas)
+        if args.treatment:
+            result = apply_treatment(result, args.treatment)
+        print(f"Annual Runoff Volume (m^3): {result['runoff_volume_m3']:.2f}")
+        print(
+            f"Annual TN Load (kg/yr): {result['TN_kg_per_yr']:.2f} ({result['TN_lb_per_yr']:.2f} lb/yr)"
+        )
+        print(
+            f"Annual TP Load (kg/yr): {result['TP_kg_per_yr']:.2f} ({result['TP_lb_per_yr']:.2f} lb/yr)"
+        )
+        return
 
     loaded = load_site_data(args.load) if args.load else None
 
@@ -51,10 +95,21 @@ def main(argv=None):
     )
 
     result = calculate_site_loads(site_data)
+    if args.treatment:
+        treated = apply_treatment(result, args.treatment)
+    else:
+        treated = None
 
     print(f"Annual Runoff Volume (m^3): {result['runoff_volume_m3']:.2f}")
     print(f"Annual TN Load (kg/yr): {result['TN_kg_per_yr']:.2f} ({result['TN_lb_per_yr']:.2f} lb/yr)")
     print(f"Annual TP Load (kg/yr): {result['TP_kg_per_yr']:.2f} ({result['TP_lb_per_yr']:.2f} lb/yr)")
+    if treated:
+        print(
+            f"Treated TN Load (kg/yr): {treated['TN_kg_per_yr']:.2f} ({treated['TN_lb_per_yr']:.2f} lb/yr)"
+        )
+        print(
+            f"Treated TP Load (kg/yr): {treated['TP_kg_per_yr']:.2f} ({treated['TP_lb_per_yr']:.2f} lb/yr)"
+        )
 
     if args.save:
         save_site_data(site_data, args.save)

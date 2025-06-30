@@ -9,3 +9,5 @@
 ## Latest Updates
 - Added real-time calculations with tooltips
 - Included citation text and pound/year outputs
+- Implemented multi-catchment aggregation and scenario comparison
+- Added treatment removal calculations and CLI option
