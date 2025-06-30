@@ -13,7 +13,12 @@ from harper_calc.calculator import (
     format_breakdown,
     save_site_data,
     load_site_data,
+    aggregate_site_loads,
+    compare_scenarios,
+    load_subareas,
+    save_subareas,
 )
+import harper_calc.calculator as calculator
 
 
 def test_calculate_runoff_volume():
@@ -47,3 +52,33 @@ def test_save_load(tmp_path):
     save_site_data(data, f)
     loaded = load_site_data(f)
     assert loaded == data
+
+
+def test_aggregate_site_loads():
+    subareas = [
+        SiteData(1.0, 1.0, 0.5, 2.0, 0.5),
+        SiteData(2.0, 1.0, 0.3, 1.5, 0.4),
+    ]
+    agg = aggregate_site_loads(subareas)
+    assert agg["TN_kg_per_yr"] > 0 and agg["TP_kg_per_yr"] > 0
+
+
+def test_compare_scenarios(tmp_path):
+    pre = [SiteData(1.0, 1.0, 0.5, 2.0, 0.5)]
+    post = [SiteData(1.0, 1.0, 0.4, 1.8, 0.4)]
+    cmp = compare_scenarios(pre, post)
+    assert cmp["tn_no_increase"] and cmp["tp_no_increase"]
+
+
+def test_apply_treatment():
+    loads = {
+        "TN_kg_per_yr": 10.0,
+        "TP_kg_per_yr": 5.0,
+        "TN_lb_per_yr": 22.0462,
+        "TP_lb_per_yr": 11.0231,
+        "runoff_volume_m3": 100.0,
+    }
+    treated = calculator.apply_treatment(loads, "dry_detention_filtration")
+    assert treated["TN_kg_per_yr"] == 7.0
+    assert treated["TP_kg_per_yr"] == 3.0
+

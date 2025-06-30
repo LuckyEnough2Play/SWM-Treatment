@@ -4,6 +4,9 @@ __all__ = [
     "format_breakdown",
     "save_site_data",
     "load_site_data",
+    "aggregate_site_loads",
+    "compare_scenarios",
+    "apply_treatment",
     "CalculatorApp",
     "export_pdf",
 ]
@@ -15,6 +18,9 @@ from .calculator import (
     format_breakdown,
     save_site_data,
     load_site_data,
+    aggregate_site_loads,
+    compare_scenarios,
+    apply_treatment,
 )
 from .gui import CalculatorApp
 from .report import export_pdf

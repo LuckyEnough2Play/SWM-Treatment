@@ -10,7 +10,10 @@ This repository contains a prototype implementation of the Harper nutrient loadi
 - Simple PDF export of calculation results
 - Calculation breakdown showing formulas in the GUI and exported PDF
 - Save and load site scenarios as JSON
+- Aggregate results for multiple subareas
+- Compare pre- and post-development scenarios for no net increase
 - Built-in help window and separate user/developer guides
+- Apply treatment removal efficiencies to evaluate BMP performance
 
 ## Running the GUI
 ```bash
@@ -32,6 +35,18 @@ To load or save scenarios:
 python -m harper_calc.cli --load example.json
 python -m harper_calc.cli --area 1.0 --save myscenario.json
 ```
+To aggregate multiple subareas:
+```bash
+python -m harper_calc.cli --subareas subareas.json
+```
+To compare pre- and post-development scenarios:
+```bash
+python -m harper_calc.cli --pre pre.json --post post.json
+```
+To apply a treatment type when calculating loads:
+```bash
+python -m harper_calc.cli --area 1.0 --treatment infiltration
+```
 
 ## Running Tests
 ```bash
@@ -45,3 +60,6 @@ Standalone executables can be created with PyInstaller. See the
 ## Support
 For issue reporting and maintenance policies, see
 [docs/SUPPORT_PLAN.md](docs/SUPPORT_PLAN.md).
+
+## Harper Tables
+All tables extracted from the Harper Stormwater Treatment Report are organized in the `harper_tables/` directory. Each Markdown file contains the raw text for an individual table or table continuation.

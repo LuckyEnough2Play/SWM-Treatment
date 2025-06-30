@@ -1,0 +1,304 @@
+## TABLE  3-2 
+ 
+PERCENTAGE  OF  ANN
+UAL  RAIN  EVENTS 
+OCCURRING  IN  SELEC
+TED  EVENT  INTERVALS 
+ 
+RAINFALL 
+STATION 
+AVERAGE 
+NUMBER  
+OF 
+RAIN 
+EVENTS 
+PERCENTAGE  OF  THE  NUMBEROF RAIN 
+EVENTS  FOR  VARIOUS  RA
+INFALL  EVENT  INTERVALS 
+0.00-0.10 
+0.11-0.20 
+0.21-0.30 
+0.31-0.40 
+0.41-0.50 
+0.51-1.00 
+1.01-1.50 
+1.51-2.00 
+2.01-2.50 
+2.51-3.00 
+3.01-3.50 
+3.51-4.00 
+4.01-4.50 
+4.51-5.00 
+5.01-6.00 
+6.01-7.00 
+7.01-8.00 
+8.01-9.00 
+9.01-15.00 
+15.01- 20.00 
+ Branford 105.85 39.8 13.2 8.2 6.0 4.4 14.6 6.4 3.6 1.7 0.8 0.4 0.2 0.2 0.1 0.1 0.1 0.0 0.0 0.1 0.0 
+ Cross City 104.23 36.8 14.0 8.6 6.6 4.8 14.5 6.8 3.3 1.9 1.1 0.6 0.3 0.2 0.1 0.2 0.1 0.0 0.1 0.0 0.0 
+ Ft. Myers 108.96 39.2 14.7 9.0 5.2 4.5 13.8 6.4 3.3 1.7 0.8 0.5 0.2 0.1 0.2 0.2 0.0 0.1 0.1 0.0 0.0 
+ Jacksonville 127.23 43.8 14.5 7.7 6.2 3.8 12.5 5.3 2.7 1.4 0.9 0.3 0.3 0.2 0.2 0.1 0.1 0.0 0.1 0.1 0.0 
+ Key West 127.51 53.7 14.6 6.7 5.5 3.2 9.4 3.2 1.6 0.6 0.4 0.3 0.1 0.1 0.0 0.1 0.1 0.0 0.0 0.0 0.0 
+ Melbourne 107.38 41.8 15.8 7.8 6.0 4.0 12.9 5.9 2.7 1.2 0.7 0.4 0.2 0.2 0.1 0.1 0.0 0.1 0.0 0.0 0.0 
+ Miami 158.03 50.2 14.6 7.0 5.3 3.5 9.9 4.2 2.2 1.2 0.8 0.3 0.2 0.2 0.1 0.1 0.1 0.0 0.0 0.0 0.0 
+ Orlando 126.53 43.3 15.6 7.2 5.7 4.2 12.9 5.5 2.6 1.2 0.7 0.3 0.2 0.1 0.1 0.2 0.0 0.0 0.0 0.0 0.0 
+ Pensacola 126.09 45.6 12.9 5.9 4.9 3.4 12.2 6.4 3.4 1.9 1.1 0.6 0.3 0.4 0.2 0.3 0.1 0.2 0.0 0.1 0.0 
+ Tallahassee 123.78 40.4 12.6 7.0 6.1 4.3 13.8 7.1 3.4 1.9 1.1 0.9 0.4 0.2 0.2 0.2 0.2 0.1 0.1 0.1 0.0 
+ Tampa 111.74 43.4 14.0 7.8 6.1 4.4 12.6 5.7 2.7 1.4 0.6 0.5 0.3 0.2 0.1 0.1 0.0 0.0 0.0 0.1 0.0 
+Minimum 104.23 36.8 12.6 5.9 4.9 3.2 9.4 3.2 1.6 0.6 0.4 0.3 0.1 0.1 0.0 0.1 0.0 0.0 0.0 0.0 0.0 
+Maximum 158.03 53.7 15.8 9.0 6.6 4.8 14.6 7.1 3.6 1.9 1.1 0.9 0.4 0.4 0.2 0.3 0.2 0.2 0.1 0.1 0.0 
+Mean 120.67 43.5 14.2 7.5 5.8 4.1 12.7 5.7 2.9 1.5 0.8 0.5 0.3 0.2 0.1 0.2 0.1 0.1 0.0 0.1 0.0 
+ 
+ 
+
+ 
+
+ 
+
+ 
+3-8 
+ 
+FDEP \ STORMWATER  TREATMENT  REPORT 
+
+FDEP \ STORMWATER  TREATMENT  REPORT 
+3-9 
+ 
+
+ 
+A comparison of the mean number of annual 
+rainfall events at each of the designated 
+regional sites is given in Figure 3-5.  The highest number of annual events occurs at the Miami 
+
+monitoring site, with approximately 158 events measured each year.  The smallest number of 
+
+annual rain events occurs at the Cross City mon
+itoring site, with a mean of 104 events measured 
+per year. 
+ Branford
+ Cross Ci t y
+ Ft. Myers
+ Jacksonville
+ Key West
+ Melbourne
+ Miam i
+ Orlando
+ Pensacola
+ T allahassee
+ Tampa
+Number  of Annual  Rai nfall  Events
+100
+110
+120
+130
+140
+150
+
+160
+ 
+ 
+Figure 3-5. Comparison of the Mean Number of Annual Rainfall Events at the 
+Selected Regional Sites. 
+ 
+
+ 
+
+ 
+3.3  Antecedent Dry Period
+ 
+ 
+ An evaluation of mean antecedent dry peri
+od was also conducted for the individual rain 
+events measured at each of the selected regional 
+monitoring sites.  This information was evaluated 
+on both a dry season (October-May) and wet seas
+on (June-September) basis.  Information on 
+antecedent dry period is useful in evaluating recovery times for stormwater management systems 
+
+which must recover stored treatment volumes prior to the next significant rain event. 
+
+FDEP \ STORMWATER  TREATMENT  REPORT 
+3-10 
+ 
+
+ 
+ A comparison of mean antecedent dry periods fo
+r rain events at the selected regional sites 
+during dry and wet season conditions is given in 
+Table 3-3 and Figure 3-6.  Mean antecedent dry 
+periods between rain events range from 3.03-5.63 
+days under dry season conditions, with an overall 
+average of 4.12 days.  Under wet season conditions, mean antecedent dry periods range from 1.42-
+
+2.27 days with an overall mean of 1.89 days.   
+ 
+ 
+ 
+
+ 
+ TABLE  3-3 
+
+ 
+
+ MEAN  ANTECEDENT  DRY  PERIODS  FOR  RAIN 
+EVENTS  AT  THE  DESIGNATED  REGIONAL  SITES
+ 
+ 
+STATION 
+ANTECEDENT  DRY  PERIOD  (days) 
+DRY  SEASON 
+WET  SEASON 
+Branford 4.40 2.14 
+Cross City 4.87 2.01 
+Ft. Myers 5.63 1.75 
+Jacksonville 3.59 1.84 
+Key West 3.92 1.80 
+Melbourne 4.14 2.27 
+Miami 3.03 1.42 
+Orlando 3.96 1.73 
+Pensacola 3.36 1.99 
+Tallahassee 3.73 1.87 
+Tampa 4.65 1.93 
+Minimum 3.03 1.42 
+Maximum 5.63 2.27 
+Mean 4.12 1.89 
+ 
+ 
+
+FDEP \ STORMWATER  TREATMENT  REPORT 
+3-11 
+ 
+
+ 
+Branford
+Cross Cit y
+For t Myer s
+Jacksonville
+Key W est
+Melbourne
+Miami
+Or lando
+Pensacola
+Tallahassee
+Tampa
+Mean Antecedant Dry Period (days)
+0
+1
+2
+
+3
+4
+5
+
+6
+Dry Season 
+Wet Season 
+ 
+ 
+ 
+
+ 
+
+ 
+
+ Figure 3-6. Comparison of Dry and Wet Season Antecedent Dry Periods at the 
+
+   RegionalMonitoringSites. 
+
+FDEP \ STORMWATER  TREATMENT  REPORT 
+ 
+ 
+
+ 
+  
+ 
+
+ 
+SECTION  4 
+ 
+
+ STORMWATER  RUNOFF Œ 
+QUALITY  AND  QUANTITY
+ 
+ 
+ 
+
+ The performance efficiency and effectiven
+ess of stormwater treatment systems are 
+closely linked to the quantity and quality of the ge
+nerated stormwater stream.  Issues related to 
+the quantity and quality of stormwater runoff form
+ the basis of existing stormwater treatment 
+design criteria.  A discussion of the quality a
+nd quantity of stormwater runoff generated by 
+various land use categories is given in the following sections. 
+
+ 
+
+ 
+4.1  Water Quality Characteristics
+ 
+ 
+
+4.1.1 DataAvailability
+ 
+ 
+ A multitude of stormwater characterization studi
+es have been conducted within the State of 
+Florida as part of research projects, permit m
+onitoring requirements, retrofit projects, and NPDES 
+permitting.  Land use categories included in runoff ch
+aracterization studies can typically be grouped 
+into one of 12 general land use designations wh
+ich are commonly used in pollutant loading 
+evaluations.  A summary of these general land use categories is given in Table 4-1. 
+
+ 
+
+ When performing pollutant loading studies for 
+large watershed areas, land use information is 
+often obtained as FLUCCS codes (Florida Land Use 
+Code and Classification System).  This system 
+typically provides multiple sub-categories for each 
+of the 12 general land use categories summarized 
+in Table 4-1 based upon differences in percen
+tage imperviousness, vegetative cover, and 
+development density.  Unfortunately, detailed runoff 
+characterization data are not available for most 
+of these sub-categories.  As a result, when pe
+rforming pollutant loading studies, detailed land use 
+categories represented by FLUCCS codes must ofte
+n be assigned to one of the 12 general land use 
+categories summarized in Table 4-1 for estimation 
+of pollutant loadings.  This assignment is 
+typically performed based upon anticipated sim
+ilarities in hydrologic and pollutant loading 
+characteristics between the detailed FLUCCS code designations and the general land use categories. 
+
+ 
+
+ A summary of the availability of runoff charact
+erization data for various pollutant categories 
+and land use types is given in Table 4-2.  Good runo
+ff characterization data is generally available for 
+suspended solids in each of the land use categorie
+s summarized in Table 4-1.  A similar level of 
+characterization data availability is present for 
+total nitrogen and total phosphorus in virtually all 
+land use categories.  However, information on 
+dissolved species of nitrogen and phosphorus is 
+relatively limited in the existing literature. 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+4-1 
+
+FDEP \ STORMWATER  TREATMENT  REPORT 
+4-2
