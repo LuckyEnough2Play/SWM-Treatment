@@ -21,6 +21,10 @@ This project is a prototype for calculating stormwater nutrient loads.
 ## Contribution Tips
 - Follow PEP 8 style conventions.
 - Add tests for new features.
+- The CLI now supports multi-catchment files via `--subareas` and
+  scenario comparison via `--pre`/`--post`. Unit tests should cover
+  these options.
+- Treatment effects can be applied with the `--treatment` option.
 - Update `Task_History.md` when tasks change status.
 
 See [SUPPORT_PLAN.md](SUPPORT_PLAN.md) for issue reporting and release
