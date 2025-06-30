@@ -120,11 +120,7 @@ class CalculatorApp(tk.Tk):
 
         # Left pane: form (fixed width)
         left = ttk.Frame(container, padding=10, style="TFrame")
-        left.update_idletasks()
-        left_width = left.winfo_reqwidth()
-        left.config(width=left_width)
         left.grid(row=0, column=0, sticky="ns")
-        left.grid_propagate(False)
 
         # Right pane: "page" (expanding)
         right_container = tk.Frame(container, bg="#FFFFFF", bd=1, relief="solid")
