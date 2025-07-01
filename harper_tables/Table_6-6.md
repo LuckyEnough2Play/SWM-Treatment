@@ -1,3 +1,4 @@
+<!-- NEEDS USER REVIEW -->
 ## TABLE  6-6 
  
 ANNUAL  C  VALUES  FOR 

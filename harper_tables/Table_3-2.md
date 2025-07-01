@@ -1,3 +1,4 @@
+<!-- NEEDS USER REVIEW -->
 ## TABLE  3-2 
  
 PERCENTAGE  OF  ANN
