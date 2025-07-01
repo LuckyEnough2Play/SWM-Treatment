@@ -65,6 +65,7 @@ class CalculatorApp(tk.Tk):
         self.configure(bg="#DCE6F1")
         self.last_result = None
         self.current_text = ""
+        self.dragging_handle = None
         self._setup_style()
         self._build_menu()
         self._build_toolbar()
@@ -166,8 +167,9 @@ class CalculatorApp(tk.Tk):
         rain_entry.grid(row=3, column=1, sticky="ew", pady=2)
         Tooltip(rain_entry, "Annual rainfall depth in inches")
         self.runoff_var = tk.StringVar()
-        runoff_entry = ttk.Entry(inputs, textvariable=self.runoff_var, state="readonly")
+        runoff_entry = ttk.Entry(inputs, textvariable=self.runoff_var)
         runoff_entry.grid(row=4, column=1, sticky="ew", pady=2)
+        ttk.Button(inputs, text="Weighted...", command=self._open_weighted_dialog).grid(row=4, column=2, padx=2)
         Tooltip(runoff_entry, "Runoff coefficient")
         self.emc_tn_var = tk.StringVar()
         tn_entry = ttk.Entry(inputs, textvariable=self.emc_tn_var, state="readonly")
@@ -209,7 +211,7 @@ class CalculatorApp(tk.Tk):
         page_w = int(8.5 * self.scale)
         page_h = int(11 * self.scale)
 
-        self.top_ruler = tk.Canvas(right, height=20, width=page_w, bg="#f0f0f0")
+        self.top_ruler = tk.Canvas(right, height=25, width=page_w, bg="#f0f0f0")
         self.top_ruler.grid(row=0, column=0, sticky="ew")
         self.right_ruler = tk.Canvas(right, width=20, height=page_h, bg="#f0f0f0")
         self.right_ruler.grid(row=1, column=1, sticky="ns")
@@ -255,6 +257,33 @@ class CalculatorApp(tk.Tk):
             f"{format_breakdown(data, result)}"
         )
         self._update_results(output)
+
+    def _open_weighted_dialog(self):
+        win = tk.Toplevel(self)
+        win.title("Weighted Runoff Coefficient")
+        ttk.Label(win, text="% Pavement").grid(row=0, column=0, sticky="e")
+        ttk.Label(win, text="% Grass").grid(row=1, column=0, sticky="e")
+        ttk.Label(win, text="% Roof").grid(row=2, column=0, sticky="e")
+        pav_var = tk.StringVar(value="0")
+        grass_var = tk.StringVar(value="0")
+        roof_var = tk.StringVar(value="0")
+        ttk.Entry(win, textvariable=pav_var, width=5).grid(row=0, column=1)
+        ttk.Entry(win, textvariable=grass_var, width=5).grid(row=1, column=1)
+        ttk.Entry(win, textvariable=roof_var, width=5).grid(row=2, column=1)
+
+        def apply_weighted():
+            try:
+                pav = float(pav_var.get()) / 100.0
+                grass = float(grass_var.get()) / 100.0
+                roof = float(roof_var.get()) / 100.0
+            except ValueError:
+                win.destroy()
+                return
+            coeff = pav * 0.9 + grass * 0.2 + roof * 0.95
+            self.runoff_var.set(f"{coeff:.2f}")
+            win.destroy()
+
+        ttk.Button(win, text="Apply", command=apply_weighted).grid(row=3, column=0, columnspan=2, pady=4)
 
     def export(self):
         if not self.last_result:
@@ -350,10 +379,10 @@ class CalculatorApp(tk.Tk):
         self.right_ruler.delete("all")
         for i in range(int(8.5) + 1):
             x = i * self.scale
-            self.top_ruler.create_line(x, 10, x, 20)
-            self.top_ruler.create_text(x, 8, text=str(i), anchor="s", font=("Helvetica", 7))
+            self.top_ruler.create_line(x, 12, x, 25)
+            self.top_ruler.create_text(x, 0, text=str(i), anchor="n", font=("Helvetica", 7))
             if i < int(8.5):
-                self.top_ruler.create_line(x + self.scale / 2, 15, x + self.scale / 2, 20)
+                self.top_ruler.create_line(x + self.scale / 2, 17, x + self.scale / 2, 25)
         for i in range(int(11) + 1):
             y = i * self.scale
             self.right_ruler.create_line(0, y, 10, y)
@@ -370,10 +399,15 @@ class CalculatorApp(tk.Tk):
         self.right_handle = self.top_ruler.create_rectangle(r - 4, 0, r + 4, 10, fill="blue", tags="right_handle")
         self.top_handle = self.right_ruler.create_rectangle(0, t - 4, 10, t + 4, fill="blue", tags="top_handle")
         self.bottom_handle = self.right_ruler.create_rectangle(0, b - 4, 10, b + 4, fill="blue", tags="bottom_handle")
-        self.top_ruler.tag_bind("left_handle", "<B1-Motion>", lambda e: self._handle_drag(e.x, 'left'))
-        self.top_ruler.tag_bind("right_handle", "<B1-Motion>", lambda e: self._handle_drag(e.x, 'right'))
-        self.right_ruler.tag_bind("top_handle", "<B1-Motion>", lambda e: self._handle_drag(e.y, 'top'))
-        self.right_ruler.tag_bind("bottom_handle", "<B1-Motion>", lambda e: self._handle_drag(e.y, 'bottom'))
+
+        for tag in ("left_handle", "right_handle"):
+            self.top_ruler.tag_bind(tag, "<ButtonPress-1>", lambda e, t=tag: self._start_handle(t))
+        for tag in ("top_handle", "bottom_handle"):
+            self.right_ruler.tag_bind(tag, "<ButtonPress-1>", lambda e, t=tag: self._start_handle(t))
+        self.top_ruler.bind("<B1-Motion>", self._drag_motion)
+        self.right_ruler.bind("<B1-Motion>", self._drag_motion)
+        self.top_ruler.bind("<ButtonRelease-1>", self._end_drag)
+        self.right_ruler.bind("<ButtonRelease-1>", self._end_drag)
 
     def _handle_drag(self, pos, which):
         value = pos / self.scale
@@ -387,6 +421,29 @@ class CalculatorApp(tk.Tk):
         elif which == 'bottom':
             page_h = 11
             self.bottom_margin_var.set(max(0, min(page_h - value, 3)))
+
+    def _start_handle(self, tag):
+        self.dragging_handle = tag
+        handle = getattr(self, tag)
+        canvas = self.top_ruler if "left" in tag or "right" in tag else self.right_ruler
+        canvas.itemconfig(handle, fill="red")
+
+    def _drag_motion(self, event):
+        tag = getattr(self, "dragging_handle", None)
+        if not tag:
+            return
+        pos = event.x if "left" in tag or "right" in tag else event.y
+        which = tag.split("_")[0]
+        self._handle_drag(pos, which)
+
+    def _end_drag(self, _event):
+        tag = getattr(self, "dragging_handle", None)
+        if not tag:
+            return
+        handle = getattr(self, tag)
+        canvas = self.top_ruler if "left" in tag or "right" in tag else self.right_ruler
+        canvas.itemconfig(handle, fill="blue")
+        self.dragging_handle = None
 
 
 def main():

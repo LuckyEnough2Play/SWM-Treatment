@@ -11,3 +11,5 @@
 - Included citation text and pound/year outputs
 - Implemented multi-catchment aggregation and scenario comparison
 - Added treatment removal calculations and CLI option
+- Runoff coefficient now user-editable with weighted option
+- Ruler labels and margin slider dragging improved
